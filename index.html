@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2014-15 NBA Season Game Winning Attempts</title>
+    <script src="anime.min.js"></script>
+    <script src="animation.js"></script>
+    <script src="hovering.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="content.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@200;400;600&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+    <div id='tooltip'>
+        <span id='showInfoT'>This is a visualization of shots taken under 5 or less seconds on the game clock during the 4th quarter (last quarter of regulation time). The data represents the 2014-15 NBA regular season from November to February. Using <a href='https://www.basketball-reference.com/' target="_blank">Basketball Reference</a> and the dataset from <a href='https://www.kaggle.com/dansbecker/nba-shot-logs' target="_blank">DanB's Kaggle NBA shot logs</a>, this is a graphical way to view the actual distances and positions shots were taken from, as the court is scaled to real dimensions. Click on the shot markers to jump to the related information. <span style='color: #00db00'>Green markers</span> indicate a <span style='color: #00db00'>made shot</span>, <span style='color: #db0000'>Red markers</span> indicate a <span style='color: #db0000'>missed shot.</span> Sort the shot information by month and shot type using top bar links. <br> Created by William Luk, Visualizating Information 2 Modeling. Made with pure JS, CSS and <a href='https://animejs.com/' target="_blank">Anime.js</a><br> Optimized for maximized desktop window viewing.</span>
+    </div>
+
+    <div id='legend'>
+        <div class='legendItem'><span style='color: #00db00'>Green markers</span> indicate a <span style='color: #00db00'>made shot</span></div>
+        <div class='legendItem'><span style='color: #db0000'>Red markers</span> indicate a <span style='color: #db0000'>missed shot</span></div>
+    </div>
+
+    <nav>
+        <ul id='shotSelect'>
+            <li>
+                <div id='navInfo'><a href=# onclick='showInfo()'>Info</a></div>
+            </li>
+            <li><a href=# onclick='showNovShots()' class='navLink' id='navNov'>November Shots</a></li>
+            <li><a href=# onclick='showDecShots()' class='navLink' id='navDec'>December Shots</a></li>
+            <li><a href=# onclick='showJanShots()' class='navLink' id='navJan'>January Shots</a></li>
+            <li><a href=# onclick='showFebShots()' class='navLink' id='navFeb'>February Shots</a></li>
+            <li><a href=# onclick='showAllShots()' class='navLink' id='navAll'>All Shots</a></li>
+            <li><a href=# onclick='show2pts()' class='navLink' id='nav2pt'>2-Point Shots</a></li>
+            <li><a href=# onclick='show3pts()' class='navLink' id='nav3pt'>3-Point Shots</a></li>
+        </ul>
+
+    </nav>
+
+    <main id='allWrap'>
+        <div id='courtWrap'>
+            <svg id='mainSVG' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 826.5">
+                <defs>
+                    <style>
+                        .cls-1,
+                        .cls-2 {
+                            fill: none;
+
+                        }
+
+                        .cls-1,
+                        .cls-2,
+                        .cls-4,
+                        .cls-5 {
+                            stroke: #231f20;
+                            stroke-miterlimit: 10;
+                            stroke-width: 5px;
+                        }
+
+                        .cls-2 {
+                            stroke-dasharray: 23.65 18.76;
+                        }
+
+                        .cls-3 {
+                            fill: #231f20;
+                            stroke-width: 5px;
+                        }
+
+                        .cls-4 {
+                            fill: #00db00;
+                        }
+
+                        .cls-5 {
+                            fill: #db0000;
+                        }
+
+                    </style>
+                </defs>
+
+                <g id="Layer_1" data-name="Layer 1">
+                    <path id="_3pt-arc" data-name="3pt-arc" class="cls-1" d="M846,.5v252C782.33,408.59,629,518.62,450,518.62s-332.33-110-396-266.16V.5" />
+                    <line id="hash-left" class="cls-1" y1="505" x2="54" y2="505" />
+                    <line id="hash-right" class="cls-1" x1="846" y1="505" x2="900" y2="505" />
+                    <path id="center-inner" class="cls-1" d="M414.5,826a36,36,0,0,1,72,0" />
+                    <path id="center-outer" class="cls-1" d="M341.5,826a108,108,0,0,1,216,0" />
+                    <line id="backboard" class="cls-1" x1="504" y1="72.5" x2="396" y2="72.5" />
+                    <circle id="basket" class="cls-1" cx="450" cy="95" r="13.5" />
+                    <path id="ft-top" class="cls-1" d="M558,343a108,108,0,0,1-216,0" />
+                    <line id="ft-line" class="cls-1" x1="594" y1="343" x2="306" y2="343" />
+                    <g id="ft-bottom">
+                        <circle class="cls-2" cx="450" cy="343" r="108" transform="translate(-110.74 418.66) rotate(-45)" />
+                    </g>
+                    <line id="ft-left" class="cls-1" x1="306.5" y1="343" x2="306.5" />
+                    <line id="ft-right" class="cls-1" x1="593.5" y1="343" x2="593.5" />
+                    <path id="charge-line" class="cls-1" d="M522,72.5V95a72,72,0,0,1-144,0V72.5" />
+                    <g id="block-right">
+                        <line class="cls-1" x1="605.49" y1="262" x2="593.5" y2="262" />
+                        <line class="cls-1" x1="605.49" y1="208" x2="593.5" y2="208" />
+                        <line class="cls-1" x1="605.49" y1="154" x2="593.5" y2="154" />
+                        <line class="cls-1" x1="605.49" y1="136" x2="593.5" y2="136" />
+                    </g>
+                    <g id="block-left">
+                        <line class="cls-1" x1="306.5" y1="262" x2="294.51" y2="262" />
+                        <line class="cls-1" x1="306.5" y1="208" x2="294.51" y2="208" />
+                        <line class="cls-1" x1="306.5" y1="154" x2="294.51" y2="154" />
+                        <line class="cls-1" x1="306.5" y1="136" x2="294.51" y2="136" />
+                    </g>
+                    <g id="border">
+                        <path class="cls-3" d="M898,2.5v822H2V2.5H898m2-2H0v826H900V.5Z" />
+                    </g>
+
+                    <g id="feb-shots">
+                        <g id="jarretja-feb2">
+                            <line class="cls-1" x1="450" y1="95" x2="715.72" y2="270.79" />
+                            <a href='#jarretja-feb2-c' cursor='pointer'>
+                                <circle class="cls-4" cx="715.57" cy="270.69" r="9" onmouseover="highlight_f1()" onmouseout="delight_f1()" />
+                            </a>
+                        </g>
+                        <g id="markieffm-feb2">
+                            <line class="cls-1" x1="450" y1="95" x2="214.67" y2="307.09" />
+                            <a href='#markieffm-feb2-c' cursor='pointer'>
+                                <circle class="cls-5" cx="214.74" cy="307.03" r="9" onmouseover="highlight_f2()" onmouseout="delight_f2()" />
+                            </a>
+                        </g>
+                        <g id="norrisco-feb4">
+                            <line class="cls-1" x1="450" y1="95" x2="649.78" y2="498.22" />
+                            <a href='#norrisco-feb4-c' cursor='pointer'>
+                                <circle class="cls-5" cx="649.78" cy="498.21" r="9" onmouseover="highlight_f3()" onmouseout="delight_f3()" />
+                            </a>
+                        </g>
+                        <g id="anthonyda-feb6">
+                            <line class="cls-1" x1="450" y1="95" x2="473.25" y2="616.48" />
+                            <a href='#anthonyda-feb6-c' cursor='pointer'>
+                                <circle class="cls-4" cx="473.25" cy="616.47" r="9" onmouseover="highlight_f4()" onmouseout="delight_f4()" />
+                            </a>
+                        </g>
+                        <g id="brianrob-feb8">
+                            <line class="cls-1" x1="450" y1="95" x2="243.56" y2="655.81" />
+                            <a href='#brianrob-feb8-c' cursor='pointer'>
+                                <circle class="cls-5" cx="243.62" cy="655.65" r="9" onmouseover="highlight_f5()" onmouseout="delight_f5()" />
+                            </a>
+                        </g>
+                        <g id="nikolavu-feb8">
+                            <line class="cls-1" x1="450" y1="95" x2="428.6" y2="255.58" /><a href='#nikolavu-feb8-c' cursor='pointer'>
+                                <circle class="cls-5" cx="428.61" cy="255.49" r="9" onmouseover="highlight_f6()" onmouseout="delight_f6()" />
+                            </a>
+                        </g>
+                        <g id="demarcusc-feb8">
+                            <line class="cls-1" x1="470.81" y1="427.35" x2="450" y2="95" /><a href='#demarcusc-feb8-c' cursor='pointer'>
+                                <circle class="cls-4" cx="470.81" cy="427.34" r="9" onmouseover="highlight_f7()" onmouseout="delight_f7()" />
+                            </a>
+                        </g>
+                        <g id="marcobel-feb9">
+                            <line class="cls-1" x1="450" y1="95" x2="131.88" y2="77.57" /><a href='#marcobel-feb9-c' cursor='pointer'>
+                                <circle class="cls-4" cx="132.05" cy="77.58" r="9" onmouseover="highlight_f8()" onmouseout="delight_f8()" />
+                            </a>
+                        </g>
+                        <g id="evantur-feb11">
+                            <line class="cls-1" x1="450" y1="95" x2="450" y2="230" /><a href='#evantur-feb11-c' cursor='pointer'>
+                                <circle class="cls-4" cx="450" cy="230" r="9" onmouseover="highlight_f9()" onmouseout="delight_f9()" />
+                            </a>
+                        </g>
+                        <g id="johnwal-feb11">
+                            <line class="cls-1" x1="494.93" y1="551.8" x2="450" y2="95" /><a href='#johnwal-feb11-c' cursor='pointer'>
+                                <circle class="cls-5" cx="494.93" cy="551.84" r="9" onmouseover="highlight_f10()" onmouseout="delight_f10()" />
+                            </a>
+                        </g>
+                        <g id="kylelow-feb23">
+                            <line class="cls-1" x1="450" y1="95" x2="215.44" y2="510.34" /><a href='#kylelow-feb23-c' cursor='pointer'>
+                                <circle class="cls-5" cx="215.43" cy="510.37" r="9" onmouseover="highlight_f11()" onmouseout="delight_f11()" />
+                            </a>
+                        </g>
+                        <g id="dwaynew-feb27">
+                            <line class="cls-1" x1="450" y1="95" x2="613.61" y2="526.74" /><a href='#dwaynew-feb27-c' cursor='pointer'>
+                                <circle class="cls-5" cx="613.55" cy="526.58" r="9" onmouseover="highlight_f12()" onmouseout="delight_f12()" />
+                            </a>
+                        </g>
+                        <a href='#tobiasha-feb8-c' cursor='pointer'>
+                            <circle id="tobiasha-feb8" class="cls-5" cx="410.61" cy="97.48" r="9" onmouseover="highlight_f13()" onmouseout="delight_f13()" />
+                        </a>
+                    </g>
+                    <g id="jan-shots">
+                        <g id="kobebry-jan2">
+                            <line class="cls-1" x1="450" y1="95" x2="239.79" y2="515.15" /><a href='#kobebry-jan2-c' cursor='pointer'>
+                                <circle class="cls-5" cx="239.87" cy="515" r="9" onmouseover="highlight_j1()" onmouseout="delight_j1()" />
+                            </a>
+                        </g>
+                        <g id="royhib-jan4">
+                            <line class="cls-1" x1="450" y1="95" x2="374.91" y2="447.08" /><a href='#royhib-jan4-c' cursor='pointer'>
+                                <circle class="cls-5" cx="374.95" cy="446.89" r="9" onmouseover="highlight_j2()" onmouseout="delight_j2()" />
+                            </a>
+                        </g>
+                        <g id="brandonjen-jan6">
+                            <line class="cls-1" x1="450" y1="95" x2="252.08" y2="89.49" /><a href='#brandonjen-jan6-c' cursor='pointer'>
+                                <circle class="cls-4" cx="252.04" cy="89.49" r="9" onmouseover="highlight_j3()" onmouseout="delight_j3()" />
+                            </a>
+                        </g>
+                        <g id="andrewwig-jan7">
+                            <line class="cls-1" x1="450" y1="95" x2="819.38" y2="335.91" /><a href='#andrewwig-jan7-c' cursor='pointer'>
+                                <circle class="cls-5" cx="819.28" cy="335.85" r="9" onmouseover="highlight_j4()" onmouseout="delight_j4()" />
+                            </a>
+                        </g>
+                        <g id="evanfou-jan7">
+                            <line class="cls-1" x1="450" y1="95" x2="876.27" y2="288.17" /><a href='#evanfou-jan7-c' cursor='pointer'>
+                                <circle class="cls-5" cx="876.29" cy="288.18" r="9" onmouseover="highlight_j5()" onmouseout="delight_j5()" />
+                            </a>
+                        </g>
+                        <g id="brooklop-jan9">
+                            <line class="cls-1" x1="450" y1="95" x2="497.81" y2="590.4" /><a href='#brooklop-jan9-c' cursor='pointer'>
+                                <circle class="cls-5" cx="497.81" cy="590.39" r="9" onmouseover="highlight_j6()" onmouseout="delight_j6()" />
+                            </a>
+                        </g>
+                        <g id="kcp-jan9">
+                            <line class="cls-1" x1="450" y1="95" x2="751.22" y2="476.39" /><a href='#kcp-jan9-c' cursor='pointer'>
+                                <circle class="cls-5" cx="751.16" cy="476.32" r="9" onmouseover="highlight_j7()" onmouseout="delight_j7()" />
+                            </a>
+                        </g>
+                        <g id="davidwe-jan10">
+                            <line class="cls-1" x1="450" y1="95" x2="463.26" y2="384.5" /><a href='#davidwe-jan10-c' cursor='pointer'>
+                                <circle class="cls-5" cx="463.5" cy="384.74" r="9" onmouseover="highlight_j8()" onmouseout="delight_j8()" />
+                            </a>
+                        </g>
+                        <g id="kobebry-jan13">
+                            <line class="cls-1" x1="450" y1="95" x2="215.55" y2="505.23" /><a href='#kobebry-jan13-c' cursor='pointer'>
+                                <circle class="cls-5" cx="215.58" cy="505.19" r="9" onmouseover="highlight_j9()" onmouseout="delight_j9()" />
+                            </a>
+                        </g>
+                        <g id="brandonjen-jan16">
+                            <line class="cls-1" x1="450" y1="95" x2="279.05" y2="187.56" /><a href='#brandonjen-jan16-c' cursor='pointer'>
+                                <circle class="cls-5" cx="279.39" cy="187.85" r="9" onmouseover="highlight_j10()" onmouseout="delight_j10()" />
+                            </a>
+                        </g>
+                        <g id="mariocha-jan21">
+                            <line class="cls-1" x1="450" y1="95" x2="39.4" y2="147.97" /><a href='#mariocha-jan21-c' cursor='pointer'>
+                                <circle class="cls-5" cx="39.45" cy="147.96" r="9" onmouseover="highlight_j11()" onmouseout="delight_j11()" />
+                            </a>
+                        </g>
+                        <g id="johnwal-jan21">
+                            <line class="cls-1" x1="450" y1="95" x2="564.18" y2="417.38" /><a href='#johnwal-jan21-c' cursor='pointer'>
+                                <circle class="cls-5" cx="564.16" cy="417.31" r="9" onmouseover="highlight_j12()" onmouseout="delight_j12()" />
+                            </a>
+                        </g>
+                        <g id="kevindur-jan21">
+                            <line class="cls-1" x1="450" y1="95" x2="552.84" y2="588.4" /><a href='#kevindur-jan21-c' cursor='pointer'>
+                                <circle class="cls-5" cx="552.83" cy="588.35" r="9" onmouseover="highlight_j13()" onmouseout="delight_j13()" />
+                            </a>
+                        </g>
+                        <g id="evantur-jan22">
+                            <line class="cls-1" x1="450" y1="95" x2="863.89" y2="104.76" /><a href='#evantur-jan22-c' cursor='pointer'>
+                                <circle class="cls-4" cx="863.72" cy="104.75" r="9" onmouseover="highlight_j14()" onmouseout="delight_j14()" />
+                            </a>
+                        </g>
+                        <g id="brandonkni-jan22">
+                            <line class="cls-1" x1="450" y1="95" x2="415.63" y2="467.82" /><a href='#brandonkni-jan22-c' cursor='pointer'>
+                                <circle class="cls-5" cx="415.63" cy="467.85" r="9" onmouseover="highlight_j15()" onmouseout="delight_j15()" />
+                            </a>
+                        </g>
+                        <g id="jameshar-jan23">
+                            <line class="cls-1" x1="450" y1="95" x2="215.44" y2="368.09" /><a href='#jameshar-jan23-c' cursor='pointer'>
+                                <circle class="cls-4" cx="215.42" cy="368.11" r="9" onmouseover="highlight_j16()" onmouseout="delight_j16()" />
+                            </a>
+                        </g>
+                        <g id="cjwats-jan23">
+                            <line class="cls-1" x1="450" y1="95" x2="808.73" y2="125.23" /><a href='#cjwats-jan23-c' cursor='pointer'>
+                                <circle class="cls-5" cx="808.78" cy="125.23" r="9" onmouseover="highlight_j17()" onmouseout="delight_j17()" />
+                            </a>
+                        </g>
+                        <g id="montaeli-jan25">
+                            <line class="cls-1" x1="450" y1="95" x2="323.54" y2="582.88" /><a href='#montaeli-jan25-c' cursor='pointer'>
+                                <circle class="cls-5" cx="323.62" cy="582.55" r="9" onmouseover="highlight_j18()" onmouseout="delight_j18()" />
+                            </a>
+                        </g>
+                        <g id="paulpie-jan25">
+                            <line class="cls-1" x1="450" y1="95" x2="85.25" y2="150.85" /><a href='#paulpie-jan25-c' cursor='pointer'>
+                                <circle class="cls-5" cx="85.32" cy="150.84" r="9" onmouseover="highlight_j19()" onmouseout="delight_j19()" />
+                            </a>
+                        </g>
+                        <g id="derrickros-jan27">
+                            <line class="cls-1" x1="450" y1="95" x2="121.7" y2="620" /><a href='#derrickros-jan27-c' cursor='pointer'>
+                                <circle class="cls-5" cx="121.78" cy="619.86" r="9" onmouseover="highlight_j20()" onmouseout="delight_j20()" />
+                            </a>
+                        </g>
+                        <a href='#matthewde-jan5-c' cursor='pointer'>
+                            <circle id="matthewde-jan5" class="cls-5" cx="441" cy="129.61" r="9" onmouseover="highlight_j21()" onmouseout="delight_j21()" />
+                        </a>
+                        <a href='#kevinlov-jan5-c' cursor='pointer'>
+                            <circle id="kevinlov-jan5" class="cls-5" cx="412.45" cy="103.98" r="9" onmouseover="highlight_j22()" onmouseout="delight_j22()" />
+                        </a>
+                        <a href='#gregmon-jan9-c' cursor='pointer'>
+                            <circle id="gregmon-jan9" class="cls-5" cx="485.52" cy="116.01" r="9" onmouseover="highlight_j23()" onmouseout="delight_j23()" />
+                        </a>
+                        <a href='#andredru-jan16-c' cursor='pointer'>
+                            <circle id="andredru-jan16" class="cls-4" cx="419.2" cy="125.5" r="9" onmouseover="highlight_j24()" onmouseout="delight_j24()" />
+                        </a>
+                        <a href='#tyrekeeva-jan18-c' cursor='pointer'>
+                            <circle id="tyrekeeva-jan18" class="cls-4" cx="484.35" cy="94.98" r="9" onmouseover="highlight_j25()" onmouseout="delight_j25()" />
+                        </a>
+                        <a href='#zazapa-jan22-c' cursor='pointer'>
+                            <circle id="zazapa-jan22" class="cls-5" cx="466.35" cy="126.82" r="9" onmouseover="highlight_j26()" onmouseout="delight_j26()" />
+                        </a>
+
+                    </g>
+                    <g id="dec-shots">
+                        <g id="gordonhay-dec1">
+                            <line class="cls-1" x1="450" y1="95" x2="436.5" y2="568.4" /><a href='#gordonhay-dec1-c' cursor='pointer'>
+                                <circle class="cls-5" cx="436.5" cy="568.34" r="9" onmouseover="highlight_d1()" onmouseout="delight_d1()" />
+                            </a>
+                        </g>
+                        <g id="derrickro-dec2">
+                            <line class="cls-1" x1="182.3" y1="584.55" x2="450" y2="95" /><a href='#derrickro-dec2-c' cursor='pointer'>
+                                <circle class="cls-5" cx="182.34" cy="584.48" r="9" onmouseover="highlight_d2()" onmouseout="delight_d2()" />
+                            </a>
+                        </g>
+                        <g id="daninlogal-dec2">
+                            <line class="cls-1" x1="450" y1="95" x2="62.36" y2="388.14" /><a href='#daninlogal-dec2-c' cursor='pointer'>
+                                <circle class="cls-5" cx="62.52" cy="388.02" r="9" onmouseover="highlight_d3()" onmouseout="delight_d3()" />
+                            </a>
+                        </g>
+                        <g id="stephcur-dec2">
+                            <line class="cls-1" x1="450" y1="95" x2="677.1" y2="506.26" /><a href='#stephcur-dec2-c' cursor='pointer'>
+                                <circle class="cls-4" cx="677.15" cy="506.34" r="9" onmouseover="highlight_d4()" onmouseout="delight_d4()" />
+                            </a>
+                        </g>
+                        <g id="joejohn-dec3">
+                            <line class="cls-1" x1="450" y1="95" x2="273.68" y2="322.72" /><a href='#joejohn-dec3-c' cursor='pointer'>
+                                <circle class="cls-5" cx="273.71" cy="322.68" r="9" onmouseover="highlight_d5()" onmouseout="delight_d5()" />
+                            </a>
+                        </g>
+                        <g id="montael-dec3">
+                            <line class="cls-1" x1="450" y1="95" x2="553.78" y2="439.72" /><a href='#montael-dec3-c' cursor='pointer'>
+                                <circle class="cls-4" cx="553.77" cy="439.69" r="9" onmouseover="highlight_d6()" onmouseout="delight_d6()" />
+                            </a>
+                        </g>
+                        <g id="chasebud-dec5">
+                            <line class="cls-1" x1="450" y1="95" x2="700.15" y2="378.38" /><a href='#chasebud-dec5-c' cursor='pointer'>
+                                <circle class="cls-5" cx="700.16" cy="378.39" r="9" onmouseover="highlight_d7()" onmouseout="delight_d7()" />
+                            </a>
+                        </g>
+                        <g id="davidwe-dec5">
+                            <line class="cls-1" x1="450" y1="95" x2="517.07" y2="375.08" /><a href='#davidwe-dec5-c' cursor='pointer'>
+                                <circle class="cls-5" cx="517.07" cy="375.06" r="9" onmouseover="highlight_d8()" onmouseout="delight_d8()" />
+                            </a>
+                        </g>
+                        <g id="nikstau-dec9">
+                            <line class="cls-1" x1="450" y1="95" x2="658.16" y2="463.24" /><a href='#nikstau-dec9-c' cursor='pointer'>
+                                <circle class="cls-5" cx="658.11" cy="463.15" r="9" onmouseover="highlight_d9()" onmouseout="delight_d9()" />
+                            </a>
+                        </g>
+                        <g id="victorola-dec10">
+                            <line class="cls-1" x1="450" y1="95" x2="673.66" y2="413.03" /><a href='#victorola-dec10-c' cursor='pointer'>
+                                <circle class="cls-5" cx="673.6" cy="412.94" r="9" onmouseover="highlight_d10()" onmouseout="delight_d10()" />
+                            </a>
+                        </g>
+                        <g id="kobebryant-dec12">
+                            <line class="cls-1" x1="167.94" y1="77.47" x2="450" y2="95" /><a href='#kobebryant-dec12-c' cursor='pointer'>
+                                <circle class="cls-5" cx="170.81" cy="77.64" r="9" onmouseover="highlight_d11()" onmouseout="delight_d11()" />
+                            </a>
+                        </g>
+                        <g id="tobiashar-dec13">
+                            <line class="cls-1" x1="450" y1="95" x2="190.01" y2="201.1" /><a href='#tobiashar-dec13-c' cursor='pointer'>
+                                <circle class="cls-4" cx="190.12" cy="201.05" r="9" onmouseover="highlight_d12()" onmouseout="delight_d12()" />
+                            </a>
+                        </g>
+                        <g id="timdun-dec12">
+                            <line class="cls-1" x1="450" y1="95" x2="716.02" y2="205.35" /><a href='#timdun-dec12-c' cursor='pointer'>
+                                <circle class="cls-5" cx="716.04" cy="205.36" r="9" onmouseover="highlight_d13()" onmouseout="delight_d13()" />
+                            </a>
+                        </g>
+                        <g id="khrismid-dec15">
+                            <line class="cls-1" x1="450" y1="95" x2="154.08" y2="434.01" /><a href='#khrismid-dec15-c' cursor='pointer'>
+                                <circle class="cls-4" cx="154.09" cy="433.99" r="9" onmouseover="highlight_d14()" onmouseout="delight_d14()" />
+                            </a>
+                        </g>
+                        <g id="cjmile-dec17">
+                            <line class="cls-1" x1="450" y1="95" x2="853.97" y2="472.06" /><a href='#cjmile-dec17-c' cursor='pointer'>
+                                <circle class="cls-5" cx="854" cy="472.09" r="9" onmouseover="highlight_d15()" onmouseout="delight_d15()" />
+                            </a>
+                        </g>
+                        <g id="marcgas-dec17">
+                            <line class="cls-1" x1="450" y1="95" x2="446.44" y2="616.99" /><a href='#marcgas-dec17-c' cursor='pointer'>
+                                <circle class="cls-4" cx="446.44" cy="616.78" r="9" onmouseover="highlight_d16()" onmouseout="delight_d16()" />
+                            </a>
+                        </g>
+                        <g id="demarcusc-dec17">
+                            <line class="cls-1" x1="450" y1="95" x2="662.39" y2="283.53" /><a href='#demarcusc-dec17-c' cursor='pointer'>
+                                <circle class="cls-5" cx="662.39" cy="283.53" r="9" onmouseover="highlight_d17()" onmouseout="delight_d17()" />
+                            </a>
+                        </g>
+                        <g id="jjredd-dec19">
+                            <line class="cls-1" x1="450" y1="95" x2="880.88" y2="126.14" /><a href='#jjredd-dec19-c' cursor='pointer'>
+                                <circle class="cls-5" cx="880.78" cy="126.13" r="9" onmouseover="highlight_d18()" onmouseout="delight_d18()" />
+                            </a>
+                        </g>
+                        <g id="kobebryant-dec19">
+                            <line class="cls-1" x1="450" y1="95" x2="211.59" y2="293.92" /><a href='#kobebryant-dec19-c' cursor='pointer'>
+                                <circle class="cls-5" cx="211.73" cy="293.81" r="9" onmouseover="highlight_d19()" onmouseout="delight_d19()" />
+                            </a>
+                        </g>
+                        <g id="cjmiles-dec20">
+                            <line class="cls-1" x1="450" y1="95" x2="524.49" y2="635.29" /><a href='#cjmiles-dec20-c' cursor='pointer'>
+                                <circle class="cls-5" cx="524.5" cy="635.32" r="9" onmouseover="highlight_d20()" onmouseout="delight_d20()" />
+                            </a>
+                        </g>
+                        <g id="russellwes-dec21">
+                            <line class="cls-1" x1="450" y1="95" x2="444.4" y2="530.56" /><a href='#russellwes-dec21-c' cursor='pointer'>
+                                <circle class="cls-5" cx="444.4" cy="530.45" r="9" onmouseover="highlight_d21()" onmouseout="delight_d21()" />
+                            </a>
+                        </g>
+                        <g id="jaredsull-dec26">
+                            <line class="cls-1" x1="450" y1="95" x2="234.23" y2="104.99" /><a href='#jaredsull-dec26-c' cursor='pointer'>
+                                <circle class="cls-5" cx="234.31" cy="104.98" r="9" onmouseover="highlight_d22()" onmouseout="delight_d22()" />
+                            </a>
+                        </g>
+                        <g id="cjwatson-dec29">
+                            <line class="cls-1" x1="450" y1="95" x2="36" y2="95" /><a href='#cjwatson-dec29-c' cursor='pointer'>
+                                <circle class="cls-5" cx="36" cy="95" r="9" onmouseover="highlight_d23()" onmouseout="delight_d23()" />
+                            </a>
+                        </g>
+                        <g id="dwanyew-dec29">
+                            <line class="cls-1" x1="450" y1="95" x2="175.53" y2="346.99" /><a href='#dwanyew-dec29-c' cursor='pointer'>
+                                <circle class="cls-5" cx="175.78" cy="346.76" r="9" onmouseover="highlight_d24()" onmouseout="delight_d24()" />
+                            </a>
+                        </g>
+                        <g id="blakegrif-dec23">
+                            <line class="cls-1" x1="450" y1="95" x2="879.76" y2="201.69" /><a href='#blakegrif-dec23-c' cursor='pointer'>
+                                <circle class="cls-5" cx="879.74" cy="201.68" r="9" onmouseover="highlight_d25()" onmouseout="delight_d25()" />
+                            </a>
+                        </g>
+                        <g id="tyrekeev-dec31">
+                            <line class="cls-1" x1="450" y1="95" x2="555.6" y2="117.62" /><a href='#tyrekeev-dec31-c' cursor='pointer'>
+                                <circle class="cls-5" cx="555.65" cy="117.63" r="9" onmouseover="highlight_d26()" onmouseout="delight_d26()" />
+                            </a>
+                        </g>
+                        <g id="anthonymo-dec31">
+                            <line class="cls-1" x1="450" y1="95" x2="302.2" y2="520.04" /><a href='#anthonymo-dec31-c' cursor='pointer'>
+                                <circle class="cls-5" cx="302.25" cy="519.9" r="9" onmouseover="highlight_d27()" onmouseout="delight_d27()" />
+                            </a>
+                        </g>
+                        <g id="ericbledsoe-dec31">
+                            <line class="cls-1" x1="450" y1="95" x2="252.1" y2="88.56" /><a href='#ericbledsoe-dec31-c' cursor='pointer'>
+                                <circle class="cls-5" cx="252.31" cy="88.57" r="9" onmouseover="highlight_d28()" onmouseout="delight_d28()" />
+                            </a>
+                        </g>
+                        <a href='#sergeib-dec21-c' cursor='pointer'>
+                            <circle id="sergeib-dec21" class="cls-5" cx="472.88" cy="120.92" r="9" onmouseover="highlight_d29()" onmouseout="delight_d29()" />
+                        </a>
+                        <a href='#timdun-dec31-c' cursor='pointer'>
+                            <circle id="timdun-dec31" class="cls-5" cx="418.93" cy="120.92" r="9" onmouseover="highlight_d30()" onmouseout="delight_d30()" />
+                        </a>
+                        <a href='#kembaw-dec5-c' cursor='pointer'>
+                            <circle id="kembaw-dec5" class="cls-4" cx="404.62" cy="93.52" r="9" onmouseover="highlight_d31()" onmouseout="delight_d31()" />
+                        </a>
+                        <a href='#bradleyb-dec10-c' cursor='pointer'>
+                            <circle id="bradleyb-dec10" class="cls-4" cx="496.25" cy="104.9" r="9" onmouseover="highlight_d32()" onmouseout="delight_d32()" />
+                        </a>
+                    </g>
+                    <g id="nov-shots">
+                        <g id="kembawal-nov1">
+                            <line class="cls-1" x1="450" y1="95" x2="644.67" y2="271.54" />
+                            <a href='#kembawal-nov1-c' cursor='pointer'>
+                                <circle class="cls-5" cx="644.39" cy="271.29" r="9" onmouseover="highlight_n1()" onmouseout="delight_n1()" />
+                            </a>
+                        </g>
+                        <g id="kembawal-nov2">
+                            <line class="cls-1" x1="450" y1="95" x2="295.68" y2="294.22" />
+                            <a href='#kembawal-nov2-c' cursor='pointer'>
+                                <circle class="cls-5" cx="295.67" cy="294.22" r="9" onmouseover="highlight_n2()" onmouseout="delight_n2()" />
+                            </a>
+                        </g>
+                        <g id="peroant-nov5">
+                            <line class="cls-1" x1="450" y1="95" x2="784.24" y2="708.22" />
+                            <a href='#peroant-nov5-c' cursor='pointer'>
+                                <circle class="cls-5" cx="784.2" cy="708.14" r="9" onmouseover="highlight_n3()" onmouseout="delight_n3()" />
+                            </a>
+                        </g>
+                        <g id="jeffgre-nov5">
+                            <line class="cls-1" x1="450" y1="95" x2="727.3" y2="489.73" />
+                            <a href='#jeffgre-nov5-c' cursor='pointer'>
+                                <circle class="cls-5" cx="727.28" cy="489.7" r="9" onmouseover="highlight_n4()" onmouseout="delight_n4()" />
+                            </a>
+                        </g>
+                        <g id="tobiashar-nov5">
+                            <line class="cls-1" x1="450" y1="95" x2="721.51" y2="366.97" />
+                            <a href='#tobiashar-nov5-c' cursor='pointer'>
+                                <circle class="cls-4" cx="721.33" cy="366.78" r="9" onmouseover="highlight_n5()" onmouseout="delight_n5()" />
+                            </a>
+                        </g>
+                        <g id="gordonhay-nov5">
+                            <line class="cls-1" x1="450" y1="95" x2="663.47" y2="419.95" />
+                            <a href='#gordonhay-nov5-c' cursor='pointer'>
+                                <circle class="cls-4" cx="663.21" cy="419.56" r="9" onmouseover="highlight_n6()" onmouseout="delight_n6()" />
+                            </a>
+                        </g>
+                        <g id="paulpie-nov5">
+                            <line class="cls-1" x1="450" y1="95" x2="568.11" y2="529.22" />
+                            <a href='#paulpie-nov5-c' cursor='pointer'>
+                                <circle class="cls-5" cx="568.09" cy="529.12" r="9" onmouseover="highlight_n7()" onmouseout="delight_n7()" />
+                            </a>
+                        </g>
+                        <g id="paulmil-nov7">
+                            <line class="cls-1" x1="450" y1="95" x2="545.75" y2="385.63" />
+                            <a href='#paulmil-nov7-c' cursor='pointer'>
+                                <circle class="cls-5" cx="545.75" cy="385.63" r="9" onmouseover="highlight_n8()" onmouseout="delight_n8()" />
+                            </a>
+                        </g>
+                        <g id="sergeiba-nov7">
+                            <line class="cls-1" x1="450" y1="95" x2="489.9" y2="543.23" />
+                            <a href='#sergeiba-nov7-c' cursor='pointer'>
+                                <circle class="cls-5" cx="489.9" cy="543.25" r="9" onmouseover="highlight_n9()" onmouseout="delight_n9()" />
+                            </a>
+                        </g>
+                        <g id="isaiahtho-nov7">
+                            <line class="cls-1" x1="450" y1="95" x2="680.16" y2="476.44" />
+                            <a href='#isaiahtho-nov7-c' cursor='pointer'>
+                                <circle class="cls-5" cx="680.09" cy="476.33" r="9" onmouseover="highlight_n10()" onmouseout="delight_n10()" />
+                            </a>
+                        </g>
+                        <g id="courtneylee-nov8">
+
+                            <line class="cls-1" x1="450" y1="95" x2="309.14" y2="563.9" />
+                            <a href='#courtneylee-nov8-c' cursor='pointer'>
+                                <circle class="cls-5" cx="309.19" cy="563.7" r="9" onmouseover="highlight_n11()" onmouseout="delight_n11()" />
+                            </a>
+                        </g>
+                        <g id="kawahileo-nov8">
+                            <line class="cls-1" x1="450" y1="95" x2="54.18" y2="83.03" />
+                            <a href='#kawahileo-nov8-c' cursor='pointer'>
+                                <circle class="cls-5" cx="53.57" cy="83.01" r="9" onmouseover="highlight_n12()" onmouseout="delight_n12()" />
+                            </a>
+                        </g>
+                        <g id="kawahileo-nov8-2" data-name="kawahileo-nov8">
+                            <line class="cls-1" x1="450" y1="95" x2="265.24" y2="110.34" />
+                            <a href='#kawahileo-nov8-2-c' cursor='pointer'>
+                                <circle class="cls-5" cx="265.49" cy="110.32" r="9" onmouseover="highlight_n13()" onmouseout="delight_n13()" />
+                            </a>
+                        </g>
+                        <g id="brandonjen-nov9">
+                            <line class="cls-1" x1="450" y1="95" x2="373.93" y2="288.48" />
+                            <a href='#brandonjen-nov9-c' cursor='pointer'>
+                                <circle class="cls-5" cx="373.9" cy="288.56" r="9" onmouseover="highlight_n14()" onmouseout="delight_n14()" />
+                            </a>
+                        </g>
+                        <g id="treybur-nov12">
+                            <line class="cls-1" x1="450" y1="95" x2="799.56" y2="357.92" />
+                            <a href='#treybur-nov12-c' cursor='pointer'>
+                                <circle class="cls-5" cx="799.39" cy="357.78" r="9" onmouseover="highlight_n15()" onmouseout="delight_n15()" />
+                            </a>
+                        </g>
+                        <g id="zachran-nov13">
+                            <line class="cls-1" x1="450" y1="95" x2="572.07" y2="156.75" />
+                            <a href='#zachran-nov13-c' cursor='pointer'>
+                                <circle class="cls-5" cx="572.01" cy="156.72" r="9" onmouseover="highlight_n16()" onmouseout="delight_n16()" />
+                            </a>
+                        </g>
+                        <g id="mcw-nov14">
+                            <line class="cls-1" x1="450" y1="95" x2="621.12" y2="391.11" />
+                            <a href='#mcw-nov14-c' cursor='pointer'>
+                                <circle class="cls-5" cx="621.06" cy="391" r="9" onmouseover="highlight_n17()" onmouseout="delight_n17()" />
+                            </a>
+                        </g>
+                        <g id="treybur-nov14">
+                            <line class="cls-1" x1="450" y1="95" x2="85.26" y2="52.6" />
+                            <a href='#treybur-nov14-c' cursor='pointer'>
+                                <circle class="cls-4" cx="85.46" cy="52.63" r="9" onmouseover="highlight_n18()" onmouseout="delight_n18()" />
+                            </a>
+                        </g>
+                        <g id="manugin-nov15">
+                            <line class="cls-1" x1="450" y1="95" x2="403.6" y2="560.69" />
+                            <a href='#manugin-nov15-c' cursor='pointer'>
+                                <circle class="cls-5" cx="403.63" cy="560.36" r="9" onmouseover="highlight_n19()" onmouseout="delight_n19()" />
+                            </a>
+                        </g>
+                        <g id="rodneystu-nov19">
+                            <line class="cls-1" x1="450" y1="95" x2="693.13" y2="249.38" />
+                            <a href='#rodneystu-nov19-c' cursor='pointer'>
+                                <circle class="cls-5" cx="693.13" cy="249.38" r="9" onmouseover="highlight_n20()" onmouseout="delight_n20()" />
+                            </a>
+                        </g>
+                        <a href='#courtneylee-nov13' cursor='pointer'>
+                            <circle id="courtneylee-nov13-c" class="cls-4" cx="481.3" cy="113.63" r="9" onmouseover="highlight_n21()" onmouseout="delight_n21()" />
+                        </a>
+                        <a href='#solomonhil-nov19' cursor='pointer'>
+                            <circle id="solomonhil-nov19-c" class="cls-4" cx="420.96" cy="111.67" r="9" onmouseover="highlight_n22()" onmouseout="delight_n22()" />
+                        </a>
+                        <g id="reggiejac-nov21">
+                            <line class="cls-1" x1="450" y1="95" x2="213.87" y2="471.71" />
+                            <a href='#reggiejac-nov21-c' cursor='pointer'>
+                                <circle class="cls-5" cx="213.93" cy="471.62" r="9" onmouseover="highlight_n23()" onmouseout="delight_n23()" />
+                            </a>
+                        </g>
+                        <g id="montaeli-nov22">
+                            <line class="cls-1" x1="450" y1="95" x2="258.51" y2="492.26" />
+                            <a href='#montaeli-nov22-c' cursor='pointer'>
+                                <circle class="cls-5" cx="258.53" cy="492.21" r="9" onmouseover="highlight_n24()" onmouseout="delight_n24()" />
+                            </a>
+                        </g>
+                        <g id="kembawal-nov23">
+                            <line class="cls-1" x1="449.19" y1="92.7" x2="547.56" y2="212.23" />
+                            <a href='#kembawal-nov23-c' cursor='pointer'>
+                                <circle class="cls-5" cx="547.57" cy="212.23" r="9" onmouseover="highlight_n25()" onmouseout="delight_n25()" />
+                            </a>
+                        </g>
+
+                        <g id="gordonhay-nov24">
+                            <line class="cls-1" x1="450" y1="95" x2="343.79" y2="513.74" />
+                            <a href='#gordonhay-nov24-c' cursor='pointer'>
+                                <circle class="cls-5" cx="343.87" cy="513.42" r="9" onmouseover="highlight_n26()" onmouseout="delight_n26()" />
+                            </a>
+                        </g>
+                        <g id="kobebry-nov28">
+                            <line class="cls-1" x1="450" y1="95" x2="432.09" y2="544.64" />
+                            <a href='#kobebry-nov28-c' cursor='pointer'>
+                                <circle class="cls-5" cx="432.1" cy="544.43" r="9" onmouseover="highlight_n27()" onmouseout="delight_n27()" />
+                            </a>
+                        </g>
+                        <g id="tyrekeeva-nov29">
+                            <line class="cls-1" x1="450" y1="95" x2="618.67" y2="531.55" />
+                            <a href='#tyrekeeva-nov29-c' cursor='pointer'>
+                                <circle class="cls-5" cx="618.52" cy="531.18" r="9" onmouseover="highlight_n28()" onmouseout="delight_n28()" />
+                            </a>
+                        </g>
+                        <a href='#aljef-nov23-c' cursor='pointer'>
+                            <circle id="aljef-nov23" class="cls-5" cx="446.13" cy="122.63" r="9" onmouseover="highlight_n29()" onmouseout="delight_n29()" />
+                        </a>
+                    </g>
+                </g>
+
+            </svg>
+        </div>
+
+        <div id='content'>
+            <div id='rowGrid'>
+                <div class='cell novContent' id='kembawal-nov1-c' onmouseover="highlight_n1()" onmouseout="delight_n1()">
+                    <span class='contentPlayer'>Kemba Walker</span>
+                    <span class='contentDist'>13.2&prime;<br> 0:05</span>
+                    <span class='contentDate'>NOV 01, 2014<br> CHA vs. MEM</span>
+                </div>
+                <div class='cell novContent' id='kembawal-nov2-c' onmouseover="highlight_n2()" onmouseout="delight_n2()">
+                    <span class='contentPlayer'>Kemba Walker</span>
+                    <span class='contentDist'>13.2&prime;<br> 0:04</span>
+                    <span class='contentDate'>NOV 02, 2014<br> CHA vs. NYK</span>
+                </div>
+                <div class='cell novContent' id='peroant-nov5-c' onmouseover="highlight_n3()" onmouseout="delight_n3()">
+                    <span class='contentPlayer'>Pero Antic</span>
+                    <span class='contentDist'>40.6&prime;<br> 0:01</span>
+                    <span class='contentDate'>NOV 05, 2014<br> ATL vs. SAS</span>
+                </div>
+                <div class='cell novContent' id='jeffgre-nov5-c' onmouseover="highlight_n4()" onmouseout="delight_n4()">
+                    <span class='contentPlayer'>Jeff Green</span>
+                    <span class='contentDist'>27.6&prime;<br> 0:04</span>
+                    <span class='contentDate'>NOV 05, 2014<br> BOS vs. TOR</span>
+                </div>
+                <div class='cell novContent' id='tobiashar-nov5-c' onmouseover="highlight_n5()" onmouseout="delight_n5()">
+                    <span class='contentPlayer'>Tobias Harris</span>
+                    <span class='contentDist'>22.7&prime;<br> 0:01</span>
+                    <span class='contentDate'>NOV 05, 2014<br> ORL vs. PHI</span>
+                </div>
+                <div class='cell novContent' id='gordonhay-nov5-c' onmouseover="highlight_n6()" onmouseout="delight_n6()">
+                    <span class='contentPlayer'>Gordon Hayward</span>
+                    <span class='contentDist'>23.2&prime;<br> 0:01</span>
+                    <span class='contentDate'>NOV 05, 2014<br> UTA vs. CLE</span>
+                </div>
+                <div class='cell novContent' id='paulpie-nov5-c' onmouseover="highlight_n7()" onmouseout="delight_n7()">
+                    <span class='contentPlayer'>Paul Pierce</span>
+                    <span class='contentDist'>24.1&prime;<br> 0:00</span>
+                    <span class='contentDate'>NOV 05, 2014<br> WAS vs. IND</span>
+                </div>
+                <div class='cell novContent' id='paulmil-nov7-c' onmouseover="highlight_n8()" onmouseout="delight_n8()">
+                    <span class='contentPlayer'>Paul Milsap</span>
+                    <span class='contentDist'>17.5&prime;<br> 0:02</span>
+                    <span class='contentDate'>NOV 07, 2014<br> ATL vs. CHA</span>
+                </div>
+                <div class='cell novContent' id='sergeiba-nov7-c' onmouseover="highlight_n9()" onmouseout="delight_n9()">
+                    <span class='contentPlayer'>Serge Ibaka</span>
+                    <span class='contentDist'>25.7&prime;<br> 0:02</span>
+                    <span class='contentDate'>NOV 07, 2014<br> OKC vs. MEM</span>
+                </div>
+                <div class='cell novContent' id='isaiahtho-nov7-c' onmouseover="highlight_n10()" onmouseout="delight_n10()">
+                    <span class='contentPlayer'>Isaiah Thomas</span>
+                    <span class='contentDist'>24.4&prime;<br> 0:00</span>
+                    <span class='contentDate'>NOV 07, 2014<br> SAC vs. PHX</span>
+                </div>
+                <div class='cell novContent' id='courtneylee-nov8-c' onmouseover="highlight_n11()" onmouseout="delight_n11()">
+                    <span class='contentPlayer'>Courtney Lee</span>
+                    <span class='contentDist'>26.4&prime;<br> 0:00</span>
+                    <span class='contentDate'>NOV 08, 2014<br> MEM vs. MIL</span>
+                </div>
+                <div class='cell novContent' id='kawahileo-nov8-c' onmouseover="highlight_n12()" onmouseout="delight_n12()">
+                    <span class='contentPlayer'>Kawhi Leonard</span>
+                    <span class='contentDist'>11.6&prime;<br> 0:00</span>
+                    <span class='contentDate'>NOV 08, 2014<br> SAS vs. NOP</span>
+                </div>
+                <div class='cell novContent' id='kawahileo-nov8-2-c' onmouseover="highlight_n13()" onmouseout="delight_n13()">
+                    <span class='contentPlayer'>Kawhi Leonard</span>
+                    <span class='contentDist'>22.1&prime;<br> 0:04</span>
+                    <span class='contentDate'>NOV 08, 2014<br> SAS vs. NOP</span>
+                </div>
+                <div class='cell novContent' id='brandonjen-nov9-c' onmouseover="highlight_n14()" onmouseout="delight_n14()">
+                    <span class='contentPlayer'>Brandon Jennings</span>
+                    <span class='contentDist'>15.1&prime;<br> 0:03</span>
+                    <span class='contentDate'>NOV 09, 2014<br> DET vs. UTA</span>
+                </div>
+                <div class='cell novContent' id='treybur-nov12-c' onmouseover="highlight_n15()" onmouseout="delight_n15()">
+                    <span class='contentPlayer'>Trey Burke</span>
+                    <span class='contentDist'>23.6&prime;<br> 0:01</span>
+                    <span class='contentDate'>NOV 12, 2014<br> UTA vs. ATL</span>
+                </div>
+                <div class='cell novContent' id='zachran-nov13-c' onmouseover="highlight_n16()" onmouseout="delight_n16()">
+                    <span class='contentPlayer'>Zach Randolph</span>
+                    <span class='contentDist'>8.2&prime;<br> 0:04</span>
+                    <span class='contentDate'>NOV 13, 2014<br> MEM vs. SAC</span>
+                </div>
+                <div class='cell novContent' id='mcw-nov14-c' onmouseover="highlight_n17()" onmouseout="delight_n17()">
+                    <span class='contentPlayer'>Michael Carter-Williams</span>
+                    <span class='contentDist'>19.8&prime;<br> 0:03</span>
+                    <span class='contentDate'>NOV 14, 2014<br> PHI vs. HOU</span>
+                </div>
+                <div class='cell novContent' id='treybur-nov14-c' onmouseover="highlight_n18()" onmouseout="delight_n18()">
+                    <span class='contentPlayer'>Trey Burke</span>
+                    <span class='contentDist'>22.8&prime;<br> 0:01</span>
+                    <span class='contentDate'>NOV 14, 2014<br> UTA vs. NYK</span>
+                </div>
+                <div class='cell novContent' id='manugin-nov15-c' onmouseover="highlight_n19()" onmouseout="delight_n19()">
+                    <span class='contentPlayer'>Manu Ginobili</span>
+                    <span class='contentDist'>25.8&prime;<br> 0:02</span>
+                    <span class='contentDate'>NOV 15, 2014<br> SAS vs. SAC</span>
+                </div>
+                <div class='cell novContent' id='rodneystu-nov19-c' onmouseover="highlight_n20()" onmouseout="delight_n20()">
+                    <span class='contentPlayer'>Rodney Stuckey</span>
+                    <span class='contentDist'>14.9&prime;<br> 0:03</span>
+                    <span class='contentDate'>NOV 19, 2014<br> IND vs. CHA</span>
+                </div>
+                <div class='cell novContent' id='courtneylee-nov13-c' onmouseover="highlight_n21()" onmouseout="delight_n21()">
+                    <span class='contentPlayer'>Courtney Lee</span>
+                    <span class='contentDist'>2.1&prime;<br> 0:00</span>
+                    <span class='contentDate'>NOV 13, 2014<br> MEM vs. SAC</span>
+                </div>
+                <div class='cell novContent' id='solomonhil-nov19-c' onmouseover="highlight_n22()" onmouseout="delight_n22()">
+                    <span class='contentPlayer'>Solomon Hill</span>
+                    <span class='contentDist'>1.1&prime;<br> 0:01</span>
+                    <span class='contentDate'>NOV 19, 2014<br> IND vs. CHA</span>
+                </div>
+                <div class='cell novContent' id='reggiejac-nov21-c' onmouseover="highlight_n23()" onmouseout="delight_n23()">
+                    <span class='contentPlayer'>Reggie Jackson</span>
+                    <span class='contentDist'>25.4&prime;<br> 0:02</span>
+                    <span class='contentDate'>NOV 21, 2014<br> OKC vs. BKN</span>
+                </div>
+                <div class='cell novContent' id='montaeli-nov22-c' onmouseover="highlight_n24()" onmouseout="delight_n24()">
+                    <span class='contentPlayer'>Monta Ellis</span>
+                    <span class='contentDist'>26.3&prime;<br> 0:04</span>
+                    <span class='contentDate'>NOV 22, 2014<br> DAL vs. HOU</span>
+                </div>
+                <div class='cell novContent' id='kembawal-nov23-c' onmouseover="highlight_n25()" onmouseout="delight_n25()">
+                    <span class='contentPlayer'>Kemba Walker</span>
+                    <span class='contentDist'>5.2&prime;<br> 0:00</span>
+                    <span class='contentDate'>NOV 23, 2014<br> CHA vs. MIA</span>
+                </div>
+                <div class='cell novContent' id='aljef-nov23-c' onmouseover="highlight_n29()" onmouseout="delight_n29()">
+                    <span class='contentPlayer'>Al Jefferson</span>
+                    <span class='contentDist'>1.3&prime;<br> 0:02</span>
+                    <span class='contentDate'>NOV 23, 2014<br> CHA vs. MIA</span>
+                </div>
+                <div class='cell novContent' id='gordonhay-nov24-c' onmouseover="highlight_n26()" onmouseout="delight_n26()">
+                    <span class='contentPlayer'>Gordon Hayward</span>
+                    <span class='contentDist'>24.2&prime;<br> 0:01</span>
+                    <span class='contentDate'>NOV 24, 2014<br> UTA vs. CHI</span>
+                </div>
+                <div class='cell novContent' id='kobebry-nov28-c' onmouseover="highlight_n27()" onmouseout="delight_n27()">
+                    <span class='contentPlayer'>Kobe Bryant</span>
+                    <span class='contentDist'>25.8&prime;<br> 0:01</span>
+                    <span class='contentDate'>NOV 28, 2014<br> LAL vs. MIN</span>
+                </div>
+                <div class='cell novContent' id='tyrekeeva-nov29-c' onmouseover="highlight_n28()" onmouseout="delight_n28()">
+                    <span class='contentPlayer'>Tyreke Evans</span>
+                    <span class='contentDist'>25.4&prime;<br> 0:02</span>
+                    <span class='contentDate'>NOV 29, 2014<br> NOP vs. WAS</span>
+                </div>
+
+                <div class='cell decContent' id='gordonhay-dec1-c' onmouseover="highlight_d1()" onmouseout="delight_d1()">
+                    <span class='contentPlayer'>Gordon Hayward</span>
+                    <span class='contentDist'>26.3&prime;<br> 0:02</span>
+                    <span class='contentDate'>DEC 01, 2014<br> UTA vs. DEN</span>
+                </div>
+                <div class='cell decContent' id='derrickro-dec2-c' onmouseover="highlight_d2()" onmouseout="delight_d2()">
+                    <span class='contentPlayer'>Derrick Rose</span>
+                    <span class='contentDist'>29.7&prime;<br> 0:00</span>
+                    <span class='contentDate'>DEC 02, 2014<br> CHI vs. DAL</span>
+                </div>
+                <div class='cell decContent' id='daninlogal-dec2-c' onmouseover="highlight_d3()" onmouseout="delight_d3()">
+                    <span class='contentPlayer'>Danilo Gallinari</span>
+                    <span class='contentDist'>32.8&prime;<br> 0:00</span>
+                    <span class='contentDate'>DEC 02, 2014<br> DEN vs. POR</span>
+                </div>
+                <div class='cell decContent' id='stephcur-dec2-c' onmouseover="highlight_d4()" onmouseout="delight_d4()">
+                    <span class='contentPlayer'>Stephen Curry</span>
+                    <span class='contentDist'>26.1&prime;<br> 0:04</span>
+                    <span class='contentDate'>DEC 02, 2014<br> GSW vs. ORL</span>
+                </div>
+                <div class='cell decContent' id='joejohn-dec3-c' onmouseover="highlight_d5()" onmouseout="delight_d5()">
+                    <span class='contentPlayer'>Joe Johnson</span>
+                    <span class='contentDist'>16.0&prime;<br> 0:01</span>
+                    <span class='contentDate'>DEC 03, 2014<br> BKN vs. SAS</span>
+                </div>
+                <div class='cell decContent' id='montael-dec3-c' onmouseover="highlight_d6()" onmouseout="delight_d6()">
+                    <span class='contentPlayer'>Monta Ellis</span>
+                    <span class='contentDist'>20.0&prime;<br> 0:01</span>
+                    <span class='contentDate'>DEC 03, 2014<br> DAL vs. MIL</span>
+                </div>
+                <div class='cell decContent' id='chasebud-dec5-c' onmouseover="highlight_d7()" onmouseout="delight_d7()">
+                    <span class='contentPlayer'>Chase Budinger</span>
+                    <span class='contentDist'>23.6&prime;<br> 0:02</span>
+                    <span class='contentDate'>DEC 05, 2014<br> MIN vs. HOU</span>
+                </div>
+                <div class='cell decContent' id='davidwe-dec5-c' onmouseover="highlight_d8()" onmouseout="delight_d8()">
+                    <span class='contentPlayer'>David West</span>
+                    <span class='contentDist'>24.3&prime;<br> 0:03</span>
+                    <span class='contentDate'>DEC 05, 2014<br> IND vs. SAC</span>
+                </div>
+                <div class='cell decContent' id='nikstau-dec9-c' onmouseover="highlight_d9()" onmouseout="delight_d9()">
+                    <span class='contentPlayer'>Nik Stauskas</span>
+                    <span class='contentDist'>23.5&prime;<br> 0:03</span>
+                    <span class='contentDate'>DEC 09, 2014<br> SAC vs. LAL</span>
+                </div>
+                <div class='cell decContent' id='victorola-dec10-c' onmouseover="highlight_d10()" onmouseout="delight_d10()">
+                    <span class='contentPlayer'>Victor Oladipo</span>
+                    <span class='contentDist'>21.6&prime;<br> 0:04</span>
+                    <span class='contentDate'>DEC 10, 2014<br> ORL vs. WAS</span>
+                </div>
+                <div class='cell decContent' id='kobebryant-dec12-c' onmouseover="highlight_d11()" onmouseout="delight_d11()">
+                    <span class='contentPlayer'>Kobe Bryant</span>
+                    <span class='contentDist'>18.4&prime;<br> 0:05</span>
+                    <span class='contentDate'>DEC 12, 2014<br> LAL vs. SAC</span>
+                </div>
+                <div class='cell decContent' id='tobiashar-dec13-c' onmouseover="highlight_d12()" onmouseout="delight_d12()">
+                    <span class='contentPlayer'>Tobias Harris</span>
+                    <span class='contentDist'>15.6&prime;<br> 0:01</span>
+                    <span class='contentDate'>DEC 13, 2014<br> ORL vs. ATL</span>
+                </div>
+                <div class='cell decContent' id='timdun-dec12-c' onmouseover="highlight_d13()" onmouseout="delight_d13()">
+                    <span class='contentPlayer'>Tim Duncan</span>
+                    <span class='contentDist'>16.0&prime;<br> 0:00</span>
+                    <span class='contentDate'>DEC 12, 2014<br> SAS vs. LAL</span>
+                </div>
+                <div class='cell decContent' id='khrismid-dec15-c' onmouseover="highlight_d14()" onmouseout="delight_d14()">
+                    <span class='contentPlayer'>Khris Middleton</span>
+                    <span class='contentDist'>25.0&prime;<br> 0:01</span>
+                    <span class='contentDate'>DEC 15, 2014<br> MIL vs. PHX</span>
+                </div>
+                <div class='cell decContent' id='cjmile-dec17-c' onmouseover="highlight_d15()" onmouseout="delight_d15()">
+                    <span class='contentPlayer'>CJ Miles</span>
+                    <span class='contentDist'>30.7&prime;<br> 0:02</span>
+                    <span class='contentDate'>DEC 17, 2014<br> IND vs. LAC</span>
+                </div>
+                <div class='cell decContent' id='marcgas-dec17-c' onmouseover="highlight_d16()" onmouseout="delight_d16()">
+                    <span class='contentPlayer'>Marc Gasol</span>
+                    <span class='contentDist'>27.4&prime;<br> 0:00</span>
+                    <span class='contentDate'>DEC 17, 2014<br> MEM vs. SAS</span>
+                </div>
+                <div class='cell decContent' id='demarcusc-dec17-c' onmouseover="highlight_d17()" onmouseout="delight_d17()">
+                    <span class='contentPlayer'>DeMarcus Cousins</span>
+                    <span class='contentDist'>22.3&prime;<br> 0:01</span>
+                    <span class='contentDate'>DEC 17, 2014<br> SAC vs. MIL</span>
+                </div>
+                <div class='cell decContent' id='jjredd-dec19-c' onmouseover="highlight_d18()" onmouseout="delight_d18()">
+                    <span class='contentPlayer'>JJ Redick</span>
+                    <span class='contentDist'>23.0&prime;<br> 0:03</span>
+                    <span class='contentDate'>DEC 19, 2014<br> LAC vs. DEN</span>
+                </div>
+                <div class='cell decContent' id='kobebryant-dec19-c' onmouseover="highlight_d19()" onmouseout="delight_d19()">
+                    <span class='contentPlayer'>Kobe Bryant</span>
+                    <span class='contentDist'>18.5&prime;<br> 0:03</span>
+                    <span class='contentDate'>DEC 19, 2014<br> LAL vs. OKC</span>
+                </div>
+                <div class='cell decContent' id='cjmiles-dec20-c' onmouseover="highlight_d20()" onmouseout="delight_d20()">
+                    <span class='contentPlayer'>CJ Miles</span>
+                    <span class='contentDist'>30.3&prime;<br> 0:00</span>
+                    <span class='contentDate'>DEC 20, 2014<br> IND vs. DEN</span>
+                </div>
+                <div class='cell decContent' id='russellwes-dec21-c' onmouseover="highlight_d21()" onmouseout="delight_d21()">
+                    <span class='contentPlayer'>Russell Westbrook</span>
+                    <span class='contentDist'>24.4&prime;<br> 0:04</span>
+                    <span class='contentDate'>DEC 21, 2014<br> OKC vs. NOP</span>
+                </div>
+                <div class='cell decContent' id='jaredsull-dec26-c' onmouseover="highlight_d22()" onmouseout="delight_d22()">
+                    <span class='contentPlayer'>Jared Sullinger</span>
+                    <span class='contentDist'>11.0&prime;<br> 0:01</span>
+                    <span class='contentDate'>DEC 26, 2014<br> BOS vs. BKN</span>
+                </div>
+                <div class='cell decContent' id='cjwatson-dec29-c' onmouseover="highlight_d23()" onmouseout="delight_d23()">
+                    <span class='contentPlayer'>CJ Watson</span>
+                    <span class='contentDist'>23.7&prime;<br> 0:00</span>
+                    <span class='contentDate'>DEC 29, 2014<br> IND vs. CHI</span>
+                </div>
+                <div class='cell decContent' id='dwanyew-dec29-c' onmouseover="highlight_d24()" onmouseout="delight_d24()">
+                    <span class='contentPlayer'>Dwayne Wade</span>
+                    <span class='contentDist'>22.4&prime;<br> 0:02</span>
+                    <span class='contentDate'>DEC 01, 2014<br> CHA vs. MEM</span>
+                </div>
+                <div class='cell decContent' id='blakegrif-dec23-c' onmouseover="highlight_d25()" onmouseout="delight_d25()">
+                    <span class='contentPlayer'>Blake Griffin</span>
+                    <span class='contentDist'>24.6&prime;<br> 0:02</span>
+                    <span class='contentDate'>DEC 23, 2014<br> LAC vs. ATL</span>
+                </div>
+                <div class='cell decContent' id='tyrekeev-dec31-c' onmouseover="highlight_d26()" onmouseout="delight_d26()">
+                    <span class='contentPlayer'>Tyreke Evans</span>
+                    <span class='contentDist'>0.5&prime;<br> 0:02</span>
+                    <span class='contentDate'>DEC 31, 2014<br> NOP vs. SAS</span>
+                </div>
+                <div class='cell decContent' id='anthonymo-dec31-c' onmouseover="highlight_d27()" onmouseout="delight_d27()">
+                    <span class='contentPlayer'>Anthony Morrow</span>
+                    <span class='contentDist'>26.1&prime;<br> 0:00</span>
+                    <span class='contentDate'>DEC 31, 2014<br> OKC vs. PHX</span>
+                </div>
+                <div class='cell decContent' id='ericbledsoe-dec31-c' onmouseover="highlight_d28()" onmouseout="delight_d28()">
+                    <span class='contentPlayer'>Eric Bledsoe</span>
+                    <span class='contentDist'>13.5&prime;<br> 0:01</span>
+                    <span class='contentDate'>DEC 31, 2014<br> PHX vs. OKC</span>
+                </div>
+                <div class='cell decContent' id='sergeib-dec21-c' onmouseover="highlight_d29()" onmouseout="delight_d29()">
+                    <span class='contentPlayer'>Kemba Walker</span>
+                    <span class='contentDist'>3.6&prime;<br> 0:02</span>
+                    <span class='contentDate'>DEC 21, 2014<br> OKC vs. NOP</span>
+                </div>
+                <div class='cell decContent' id='timdun-dec31-c' onmouseover="highlight_d30()" onmouseout="delight_d30()">
+                    <span class='contentPlayer'>Tim Duncan</span>
+                    <span class='contentDist'>4.1&prime;<br> 0:01</span>
+                    <span class='contentDate'>DEC 31, 2014<br> SAS vs. NOP</span>
+                </div>
+                <div class='cell decContent' id='kembaw-dec5-c' onmouseover="highlight_d31()" onmouseout="delight_d31()">
+                    <span class='contentPlayer'>Kemba Walker</span>
+                    <span class='contentDist'>1.0&prime;<br> 0:01</span>
+                    <span class='contentDate'>DEC 05, 2014<br> CHA vs. NYK</span>
+                </div>
+                <div class='cell decContent' id='bradleyb-dec10-c' onmouseover="highlight_d32()" onmouseout="delight_d32()">
+                    <span class='contentPlayer'>Bradley Beal</span>
+                    <span class='contentDist'>1.9&prime;<br> 0:01</span>
+                    <span class='contentDate'>DEC 10, 2014<br> WAS vs. ORL</span>
+                </div>
+
+                <div class='cell janContent' id='kobebry-jan2-c' onmouseover="highlight_j1()" onmouseout="delight_j1()">
+                    <span class='contentPlayer'>Kobe Bryant</span>
+                    <span class='contentDist'>27.2&prime;<br> 0:00</span>
+                    <span class='contentDate'>JAN 02, 2015<br> LAL vs. MEM</span>
+                </div>
+                <div class='cell janContent' id='royhib-jan4-c' onmouseover="highlight_j2()" onmouseout="delight_j2()">
+                    <span class='contentPlayer'>Roy Hibbert</span>
+                    <span class='contentDist'>20.0&prime;<br> 0:00</span>
+                    <span class='contentDate'>JAN 04, 2015<br> IND vs. LAL</span>
+                </div>
+                <div class='cell janContent' id='brandonjen-jan6-c' onmouseover="highlight_j3()" onmouseout="delight_j3()">
+                    <span class='contentPlayer'>Brandon Jennings</span>
+                    <span class='contentDist'>10.7&prime;<br> 0:01</span>
+                    <span class='contentDate'>JAN 06, 2015<br> DET vs. SAS</span>
+                </div>
+                <div class='cell janContent' id='andrewwig-jan7-c' onmouseover="highlight_j4()" onmouseout="delight_j4()">
+                    <span class='contentPlayer'>Andrew Wiggins</span>
+                    <span class='contentDist'>24.0&prime;<br> 0:01</span>
+                    <span class='contentDate'>JAN 07, 2015<br> MIN vs. PHX</span>
+                </div>
+                <div class='cell janContent' id='evanfou-jan7-c' onmouseover="highlight_j5()" onmouseout="delight_j5()">
+                    <span class='contentPlayer'>Evan Fournier</span>
+                    <span class='contentDist'>25.7&prime;<br> 0:02</span>
+                    <span class='contentDate'>JAN 07, 2015<br> ORL vs. DEN</span>
+                </div>
+                <div class='cell janContent' id='brooklop-jan9-c' onmouseover="highlight_j6()" onmouseout="delight_j6()">
+                    <span class='contentPlayer'>Brooke Lopez</span>
+                    <span class='contentDist'>29.3&prime;<br> 0:01</span>
+                    <span class='contentDate'>JAN 09, 2015<br> BKN vs. PHI</span>
+                </div>
+                <div class='cell janContent' id='kcp-jan9-c' onmouseover="highlight_j7()" onmouseout="delight_j7()">
+                    <span class='contentPlayer'>Kentavious Caldwell-Pope</span>
+                    <span class='contentDist'>26.7&prime;<br> 0:01</span>
+                    <span class='contentDate'>JAN 09, 2015<br> DET vs. ATL</span>
+                </div>
+                <div class='cell janContent' id='davidwe-jan10-c' onmouseover="highlight_j8()" onmouseout="delight_j8()">
+                    <span class='contentPlayer'>David West</span>
+                    <span class='contentDist'>20.8&prime;<br> 0:02</span>
+                    <span class='contentDate'>JAN 10, 2015<br> IND vs. PHI</span>
+                </div>
+                <div class='cell janContent' id='kobebry-jan13-c' onmouseover="highlight_j9()" onmouseout="delight_j9()">
+                    <span class='contentPlayer'>Kobe Bryant</span>
+                    <span class='contentDist'>27.5&prime;<br> 0:04</span>
+                    <span class='contentDate'>JAN 13, 2015<br> LAL vs. MIA</span>
+                </div>
+                <div class='cell janContent' id='brandonjen-jan16-c' onmouseover="highlight_j10()" onmouseout="delight_j10()">
+                    <span class='contentPlayer'>Brandon Jennings</span>
+                    <span class='contentDist'>9.6&prime;<br> 0:03</span>
+                    <span class='contentDate'>JAN 16, 2015<br> DET vs. IND</span>
+                </div>
+                <div class='cell janContent' id='mariocha-jan21-c' onmouseover="highlight_j11()" onmouseout="delight_j11()">
+                    <span class='contentPlayer'>Mario Chalmers</span>
+                    <span class='contentDist'>22.1&prime;<br> 0:02</span>
+                    <span class='contentDate'>JAN 21, 2015<br> MIA vs. CHA</span>
+                </div>
+                <div class='cell janContent' id='johnwal-jan21-c' onmouseover="highlight_j12()" onmouseout="delight_j12()">
+                    <span class='contentPlayer'>John Wall</span>
+                    <span class='contentDist'>19.9&prime;<br> 0:04</span>
+                    <span class='contentDate'>JAN 21, 2015<br> WAS vs. OKC</span>
+                </div>
+                <div class='cell janContent' id='kevindur-jan21-c' onmouseover="highlight_j13()" onmouseout="delight_j13()">
+                    <span class='contentPlayer'>Kevin Durant</span>
+                    <span class='contentDist'>28.0&prime;<br> 0:01</span>
+                    <span class='contentDate'>JAN 21, 2015<br> OKC vs. WAS</span>
+                </div>
+                <div class='cell janContent' id='evantur-jan22-c' onmouseover="highlight_j14()" onmouseout="delight_j14()">
+                    <span class='contentPlayer'>Evan Turner</span>
+                    <span class='contentDist'>23.0&prime;<br> 0:03</span>
+                    <span class='contentDate'>JAN 22, 2015<br> BOS vs. POR</span>
+                </div>
+                <div class='cell janContent' id='brandonkni-jan22-c' onmouseover="highlight_j15()" onmouseout="delight_j15()">
+                    <span class='contentPlayer'>Brandon Knight</span>
+                    <span class='contentDist'>22.6&prime;<br> 0:04</span>
+                    <span class='contentDate'>JAN 22, 2015<br> CHA vs. MEM</span>
+                </div>
+                <div class='cell janContent' id='jameshar-jan23-c' onmouseover="highlight_j16()" onmouseout="delight_j16()">
+                    <span class='contentPlayer'>James Harden</span>
+                    <span class='contentDist'>20.4&prime;<br> 0:01</span>
+                    <span class='contentDate'>JAN 23, 2015<br> HOU vs. PHX</span>
+                </div>
+                <div class='cell janContent' id='cjwats-jan23-c' onmouseover="highlight_j17()" onmouseout="delight_j17()">
+                    <span class='contentPlayer'>CJ Watson</span>
+                    <span class='contentDist'>20.1&prime;<br> 0:01</span>
+                    <span class='contentDate'>JAN 23, 2015<br> IND vs. MIA</span>
+                </div>
+                <div class='cell janContent' id='montaeli-jan25-c' onmouseover="highlight_j18()" onmouseout="delight_j18()">
+                    <span class='contentPlayer'>Monta Ellis</span>
+                    <span class='contentDist'>28.7&prime;<br> 0:03</span>
+                    <span class='contentDate'>JAN 25, 2015<br> DAL vs. NOP</span>
+                </div>
+                <div class='cell janContent' id='paulpie-jan25-c' onmouseover="highlight_j19()" onmouseout="delight_j19()">
+                    <span class='contentPlayer'>Paul Pierce</span>
+                    <span class='contentDist'>20.8&prime;<br> 0:00</span>
+                    <span class='contentDate'>JAN 25, 2015<br> WAS vs. DEN</span>
+                </div>
+                <div class='cell janContent' id='derrickros-jan27-c' onmouseover="highlight_j20()" onmouseout="delight_j20()">
+                    <span class='contentPlayer'>Derrick Rose</span>
+                    <span class='contentDist'>35.8&prime;<br> 0:01</span>
+                    <span class='contentDate'>JAN 27, 2015<br> CHI vs. GSW</span>
+                </div>
+                <div class='cell janContent' id='matthewde-jan5-c' onmouseover="highlight_j21()" onmouseout="delight_j21()">
+                    <span class='contentPlayer'>Matthew Dellavedova</span>
+                    <span class='contentDist'>3.3&prime;<br> 0:04</span>
+                    <span class='contentDate'>JAN 05, 2015<br> CLE vs. PHI</span>
+                </div>
+                <div class='cell janContent' id='kevinlov-jan5-c' onmouseover="highlight_j22()" onmouseout="delight_j22()">
+                    <span class='contentPlayer'>Kevin Love</span>
+                    <span class='contentDist'>0.6&prime;<br> 0:03</span>
+                    <span class='contentDate'>JAN 05, 2015<br> CLE vs. PHI</span>
+                </div>
+                <div class='cell janContent' id='gregmon-jan9-c' onmouseover="highlight_j23()" onmouseout="delight_j23()">
+                    <span class='contentPlayer'>Greg Monroe</span>
+                    <span class='contentDist'>3.3&prime;<br> 0:03</span>
+                    <span class='contentDate'>JAN 09, 2015<br> DET vs. ATL</span>
+                </div>
+                <div class='cell janContent' id='andredru-jan16-c' onmouseover="highlight_j24()" onmouseout="delight_j24()">
+                    <span class='contentPlayer'>Andre Drummond</span>
+                    <span class='contentDist'>0.5&prime;<br> 0:01</span>
+                    <span class='contentDate'>JAN 16, 2015<br> DET vs. IND</span>
+                </div>
+                <div class='cell janContent' id='tyrekeeva-jan18-c' onmouseover="highlight_j25()" onmouseout="delight_j25()">
+                    <span class='contentPlayer'>Tyreke Evans</span>
+                    <span class='contentDist'>6.1&prime;<br> 0:03</span>
+                    <span class='contentDate'>JAN 01, 2015<br> NOP vs. TOR</span>
+                </div>
+                <div class='cell janContent' id='zazapa-jan22-c' onmouseover="highlight_j26()" onmouseout="delight_j26()">
+                    <span class='contentPlayer'>Zaza Pachulia</span>
+                    <span class='contentDist'>4.3&prime;<br> 0:02</span>
+                    <span class='contentDate'>JAN 22, 2015<br> MIL vs. UTA</span>
+                </div>
+
+                <div class='cell febContent' id='jarretja-feb2-c' onmouseover="highlight_f1()" onmouseout="delight_f1()">
+                    <span class='contentPlayer'>Jarrett Jack</span>
+                    <span class='contentDist'>17.7&prime;<br> 0:03</span>
+                    <span class='contentDate'>FEB 02, 2015<br> BKN vs. LAC</span>
+                </div>
+                <div class='cell febContent' id='markieffm-feb2-c' onmouseover="highlight_f2()" onmouseout="delight_f2()">
+                    <span class='contentPlayer'>Markieff Morris</span>
+                    <span class='contentDist'>19.2&prime;<br> 0:02</span>
+                    <span class='contentDate'>FEB 02, 2015<br> PHX vs. MEM</span>
+                </div>
+                <div class='cell febContent' id='norrisco-feb4-c' onmouseover="highlight_f3()" onmouseout="delight_f3()">
+                    <span class='contentPlayer'>Norris Cole</span>
+                    <span class='contentDist'>25.7&prime;<br> 0:03</span>
+                    <span class='contentDate'>FEB 04, 2015<br> MIA vs. MIN</span>
+                </div>
+                <div class='cell febContent' id='anthonyda-feb6-c' onmouseover="highlight_f4()" onmouseout="delight_f4()">
+                    <span class='contentPlayer'>Anthony Davis</span>
+                    <span class='contentDist'>28.9&prime;<br> 0:00</span>
+                    <span class='contentDate'>FEB 06, 2015<br> NOP vs. OKC</span>
+                </div>
+                <div class='cell febContent' id='brianrob-feb8-c' onmouseover="highlight_f5()" onmouseout="delight_f5()">
+                    <span class='contentPlayer'>Brian Roberts</span>
+                    <span class='contentDist'>34.4&prime;<br> 0:01</span>
+                    <span class='contentDate'>FEB 08, 2015<br> CHA vs. IND</span>
+                </div>
+                <div class='cell febContent' id='nikolavu-feb8-c' onmouseover="highlight_f6()" onmouseout="delight_f6()">
+                    <span class='contentPlayer'>Nikola Vucevic</span>
+                    <span class='contentDist'>10.3&prime;<br> 0:05</span>
+                    <span class='contentDate'>FEB 08, 2015<br> ORL vs. CHI</span>
+                </div>
+                <div class='cell febContent' id='demarcusc-feb8-c' onmouseover="highlight_f7()" onmouseout="delight_f7()">
+                    <span class='contentPlayer'>DeMarcus Cousins</span>
+                    <span class='contentDist'>18.1&prime;<br> 0:01</span>
+                    <span class='contentDate'>FEB 08, 2015<br> SAC vs. PHX</span>
+                </div>
+                <div class='cell febContent' id='marcobel-feb9-c' onmouseover="highlight_f8()" onmouseout="delight_f8()">
+                    <span class='contentPlayer'>Marco Belinelli</span>
+                    <span class='contentDist'>18.4&prime;<br> 0:04</span>
+                    <span class='contentDate'>FEB 09, 2015<br> SAS vs. IND</span>
+                </div>
+                <div class='cell febContent' id='evantur-feb11-c' onmouseover="highlight_f9()" onmouseout="delight_f9()">
+                    <span class='contentPlayer'>Evan Turner</span>
+                    <span class='contentDist'>8.0&prime;<br> 0:01</span>
+                    <span class='contentDate'>FEB 11, 2015<br> BOS vs. ATL</span>
+                </div>
+                <div class='cell febContent' id='johnwal-feb11-c' onmouseover="highlight_f10()" onmouseout="delight_f10()">
+                    <span class='contentPlayer'>John Wall</span>
+                    <span class='contentDist'>26.0&prime;<br> 0:02</span>
+                    <span class='contentDate'>FEB 11, 2015<br> WAS vs. TOR</span>
+                </div>
+                <div class='cell febContent' id='kylelow-feb23-c' onmouseover="highlight_f11()" onmouseout="delight_f11()">
+                    <span class='contentPlayer'>Kyle Lowry</span>
+                    <span class='contentDist'>26.9&prime;<br> 0:01</span>
+                    <span class='contentDate'>FEB 23, 2015<br> TOR vs. NOP</span>
+                </div>
+                <div class='cell febContent' id='dwaynew-feb27-c' onmouseover="highlight_f12()" onmouseout="delight_f12()">
+                    <span class='contentPlayer'>Dwayne Wade</span>
+                    <span class='contentDist'>26.3&prime;<br> 0:03</span>
+                    <span class='contentDate'>FEB 27, 2015<br> MIA vs. NOP</span>
+                </div>
+                <div class='cell febContent' id='tobiasha-feb8-c' onmouseover="highlight_f13()" onmouseout="delight_f13()">
+                    <span class='contentPlayer'>Tobias Harris</span>
+                    <span class='contentDist'>2.3&prime;<br> 0:03</span>
+                    <span class='contentDate'>FEB 08, 2015<br> ORL vs. CHI</span>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>
